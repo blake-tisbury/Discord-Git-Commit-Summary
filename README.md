@@ -5,6 +5,9 @@ Simple Discord bot that reads commits on all branches of a project, formats them
 
 ## Screenshots
 
+
+![App Screenshot](https://github.com/blake-tisbury/Discord-Git-Commit-Summary/blob/master/discord_github_3commits_sc.png?raw=true)
 ![App Screenshot](https://github.com/blake-tisbury/Discord-Git-Commit-Summary/blob/master/discord_github_lazy_sc.png?raw=true)
+
 
 
