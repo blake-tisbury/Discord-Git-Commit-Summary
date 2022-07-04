@@ -116,4 +116,4 @@ if __name__ == "__main__":
     load_dotenv(dotenv_path=path, verbose=True)
     bot = GitDiscordBot(
         'https://github.com/blake-tisbury/sumo-man-game.git', os.getenv('GITHUB_TOKEN'),
-        964639186101620746, os.getenv('DISCORD_TOKEN'), "$sumo_git", 15, 45)  # runs at 5:45 PM
+        964639186101620746, os.getenv('DISCORD_TOKEN'), "$sumo_git", 21, 45)  # runs at 5:45 PM
