@@ -37,7 +37,6 @@ class GitDiscordBot(commands.Bot):
         self.update_discord_scheduler.start()
 
     @tasks.loop(hours=24)
-    @commands.command(name="update_git", help="Updates the Git commits on Discord.")
     async def update_discord_scheduler(self):
         # calculate how seconds until it's time to update
         now = datetime.datetime.now()
