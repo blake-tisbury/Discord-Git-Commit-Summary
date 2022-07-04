@@ -42,6 +42,8 @@ class GitDiscordBot(commands.Bot):
         now = datetime.datetime.now()
         est = datetime.datetime.now()
         est = est.replace(hour=self.scheduled_hour, minute=self.scheduled_minute, second=0, microsecond=0)
+        # subtract four hours to account for timezone
+        est = est - datetime.timedelta(hours=4)
         time_until_update = (est - now).total_seconds()
 
         if time_until_update < 0:
