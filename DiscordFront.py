@@ -57,7 +57,7 @@ class GitDiscordBot(commands.Bot):
             if formatted_time[i][0] == '0':
                 formatted_time[i] = formatted_time[i][1:]
 
-        formatted_time = formatted_time[0] + ' hours and ' + formatted_time[1] + f' minute{"" if formatted_time[1] == "1" else "s"}'
+        formatted_time = formatted_time[0] + f' hour{"" if formatted_time[0] == "1" else "s"} and ' + formatted_time[1] + f' minute{"" if formatted_time[1] == "1" else "s"}'
 
         print(f'[INFO] Scheduled update to #{self.get_channel(self.channel).name} in {formatted_time}.')
 
