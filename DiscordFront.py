@@ -41,7 +41,7 @@ class GitDiscordBot(commands.Bot):
         # calculate how seconds until it's time to update
         now = datetime.datetime.now()
         est = datetime.datetime.now()
-        est = est.replace(hour=self.scheduled_hour, minute=0, second=0, microsecond=0)
+        est = est.replace(hour=self.scheduled_hour, minute=self.scheduled_minute, second=0, microsecond=0)
         time_until_update = (est - now).total_seconds()
 
         if time_until_update < 0:
