@@ -1,9 +1,7 @@
 # !/usr/bin/env python3
-import os
 import asyncio
 import datetime
-
-
+import os
 import requests
 from dotenv import load_dotenv
 
@@ -18,7 +16,9 @@ class GitRunner:
     async def get_commits(self, branch: str, num_days: int) -> list:
         # get commits from GitHub branch since input number of days
 
-        date = (datetime.datetime.now() - datetime.timedelta(days=num_days)).strftime('%Y-%m-%d')
+        # we get the time in UTC, so we need to convert it to local time by -5 hours
+        # iso format is also needed for the API
+        date = (datetime.datetime.now() - datetime.timedelta(days=num_days, hours=5)).isoformat(timespec='minutes')
 
         url = f'https://api.github.com/repos/{self.repo_owner}/{self.repo_name}/commits?sha={branch}&since={date}'
         headers = {'Authorization': f'token {self.auth_token}'}

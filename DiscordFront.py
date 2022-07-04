@@ -1,18 +1,26 @@
+import datetime
 import os
 import asyncio
-from dotenv import load_dotenv
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord_components import *
+from dotenv import load_dotenv
 from GitRunner import GitRunner
 
 
 class GitDiscordBot(commands.Bot):
-    def __init__(self, git_url: str, git_token: str, channel: int, discord_token: str, command_prefix: str, **options):
+    def __init__(
+            self, git_url: str,
+            git_token: str, channel: int,
+            discord_token: str, command_prefix: str,
+            scheduled_hour: int, scheduled_minute: int, **options
+    ):
         super().__init__(command_prefix, **options)
 
         self.channel = channel
         self.discord_token = discord_token
+        self.scheduled_hour = scheduled_hour
+        self.scheduled_minute = scheduled_minute
         self.git_runner = GitRunner(git_url, git_token)
         self.run(self.discord_token)
 
@@ -24,32 +32,50 @@ class GitDiscordBot(commands.Bot):
         print("Bot running with:")
         print("Username: ", self.user.name)
         print("User ID: ", self.user.id)
+        print("[INFO] Bot is ready.")
 
-        loop = asyncio.get_event_loop()
-        loop.create_task(self.update_scheduler(60 * 60 * 24))
+        self.update_discord_scheduler.start()
 
-    async def update_scheduler(self, timeout):
-        while True:
-            await self.git_update()
-            print("[INFO] Updated Discord.")
-            await asyncio.sleep(timeout)
+    @tasks.loop(hours=24)
+    async def update_discord_scheduler(self):
+        # calculate how seconds until it's time to update
+        now = datetime.datetime.now()
+        est = datetime.datetime.now() - datetime.timedelta(hours=5)  # EST
+        est = est.replace(hour=self.scheduled_hour, minute=0, second=0, microsecond=0)
+        if est < now:
+            est = est + datetime.timedelta(days=1)
+        time_until_update = (est - now).total_seconds()
+
+        if time_until_update < 0:
+            time_until_update += 86400  # if it's already past our time, add a day
+
+        print("[INFO] Scheduled update in: " + str(time_until_update) + " seconds.")
+
+        await asyncio.sleep(time_until_update)
+        await self.git_update()
 
     async def git_update(self):
+        print("[INFO] Getting Git commits...")
         self.commits_body = ""
         self.list_memo = {}
 
         for branch in await self.git_runner.get_branches():
             await self.format_commits(branch)
 
-        if (len(self.list_memo)) == 0:
+        number_of_commits = len(self.list_memo)
+
+        if number_of_commits == 0:
             self.commits_body = "No new commits today, devs are lazy :("
 
         channel = self.get_channel(self.channel)
-        em = discord.Embed(title=f"**Number of commits today: {str(len(self.list_memo))}**",
+        em = discord.Embed(title=f"**Number of commits today: {str(number_of_commits)}**",
                            description=self.commits_body,
                            color=0xceceff)
+        print("[INFO] Sending Git commits to Discord...")
         msg = await channel.send(
             embed=em)
+        print(
+            f"[INFO] #{channel.name} updated with {str(number_of_commits)} new commit{'' if str(number_of_commits) == 1 else 's'}.")
 
     async def format_commits(self, branch):
 
@@ -80,4 +106,4 @@ if __name__ == "__main__":
     load_dotenv(dotenv_path=path, verbose=True)
     bot = GitDiscordBot(
         'https://github.com/blake-tisbury/sumo-man-game.git', os.getenv('GITHUB_TOKEN'),
-        849180725047590922, os.getenv('DISCORD_TOKEN'), "!")
+        849180725047590922, os.getenv('DISCORD_TOKEN'), "$sumo_git", 17, 45)  # runs at 5:45 PM
