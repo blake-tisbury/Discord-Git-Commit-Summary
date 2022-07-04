@@ -40,10 +40,8 @@ class GitDiscordBot(commands.Bot):
     async def update_discord_scheduler(self):
         # calculate how seconds until it's time to update
         now = datetime.datetime.now()
-        est = datetime.datetime.now() - datetime.timedelta(hours=5)  # EST
+        est = datetime.datetime.now()
         est = est.replace(hour=self.scheduled_hour, minute=0, second=0, microsecond=0)
-        if est < now:
-            est = est + datetime.timedelta(days=1)
         time_until_update = (est - now).total_seconds()
 
         if time_until_update < 0:

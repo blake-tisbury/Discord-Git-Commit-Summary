@@ -18,7 +18,7 @@ class GitRunner:
 
         # we get the time in UTC, so we need to convert it to local time by -5 hours
         # iso format is also needed for the API
-        date = (datetime.datetime.now() - datetime.timedelta(days=num_days, hours=5)).isoformat(timespec='minutes')
+        date = (datetime.datetime.now() - datetime.timedelta(days=num_days, hours=4)).isoformat(timespec='minutes')
 
         url = f'https://api.github.com/repos/{self.repo_owner}/{self.repo_name}/commits?sha={branch}&since={date}'
         headers = {'Authorization': f'token {self.auth_token}'}
