@@ -49,7 +49,19 @@ class GitDiscordBot(commands.Bot):
         if time_until_update < 0:
             time_until_update += 86400  # if it's already past our time, add a day
 
-        print("[INFO] Scheduled update in: " + str(time_until_update) + " seconds.")
+        # formate time until update to a readable format
+        formatted_time = str(datetime.timedelta(seconds=time_until_update))
+        formatted_time = formatted_time.split('.')[0]
+        formatted_time = formatted_time.split(':')
+
+        # remove zero in front of numbers if it's less than 10
+        for i in range(len(formatted_time)):
+            if formatted_time[i][0] == '0':
+                formatted_time[i] = formatted_time[i][1:]
+
+        formatted_time = formatted_time[0] + ' hours and ' + formatted_time[1] + f' minute{"" if formatted_time[1] == "1" else "s"}'
+
+        print(f'[INFO] Scheduled update to #{self.get_channel(self.channel).name} in {formatted_time}.')
 
         await asyncio.sleep(time_until_update)
         await self.git_update()
@@ -106,4 +118,4 @@ if __name__ == "__main__":
     load_dotenv(dotenv_path=path, verbose=True)
     bot = GitDiscordBot(
         'https://github.com/blake-tisbury/sumo-man-game.git', os.getenv('GITHUB_TOKEN'),
-        849180725047590922, os.getenv('DISCORD_TOKEN'), "$sumo_git", 17, 45)  # runs at 5:45 PM
+        921133589364633672, os.getenv('DISCORD_TOKEN'), "$sumo_git", 17, 45)  # runs at 5:45 PM
