@@ -16,9 +16,9 @@ class GitRunner:
     async def get_commits(self, branch: str, num_days: int) -> list:
         # get commits from GitHub branch since input number of days
 
-        # we get the time in UTC, so we need to convert it to local time by -3 hours
+        # we get the time in UTC, so we need to convert it to local time by -2 hours
         # iso format is also needed for the API
-        date = (datetime.datetime.now() - datetime.timedelta(days=num_days, hours=3)).isoformat(timespec='minutes')
+        date = (datetime.datetime.now() - datetime.timedelta(days=num_days, hours=2)).isoformat(timespec='minutes')
 
         url = f'https://api.github.com/repos/{self.repo_owner}/{self.repo_name}/commits?sha={branch}&since={date}'
         headers = {'Authorization': f'token {self.auth_token}'}
