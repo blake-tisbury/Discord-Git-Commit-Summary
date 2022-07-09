@@ -16,9 +16,11 @@ class GitRunner:
     async def get_commits(self, branch: str, num_days: int) -> list:
         # get commits from GitHub branch since input number of days
 
-        # we get the time in UTC, so we need to convert it to local time by -4 hours
-        # iso format is also needed for the API
-        date = (datetime.datetime.now() - datetime.timedelta(days=num_days, hours=4)).isoformat(timespec='minutes')
+        # iso format is needed for the API
+        # offset added for GitHub API?? I think this works
+        date = (datetime.datetime.now() - datetime.timedelta(days=num_days, hours=3)).isoformat(timespec='minutes')
+
+        print(datetime.datetime.now())
 
         url = f'https://api.github.com/repos/{self.repo_owner}/{self.repo_name}/commits?sha={branch}&since={date}'
         headers = {'Authorization': f'token {self.auth_token}'}
@@ -46,4 +48,4 @@ if __name__ == "__main__":
     path = 'tokens.env'
     load_dotenv(dotenv_path=path, verbose=True)
     git_runner = GitRunner("https://github.com/blake-tisbury/sumo-man-game.git", os.getenv('GITHUB_TOKEN'))
-    asyncio.run(git_runner.get_commits("blake", 10))
+    asyncio.run(git_runner.get_commits("main", 1))
